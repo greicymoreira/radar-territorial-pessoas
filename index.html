@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Radar Territorial de Pessoas COMLURB</title>
+
+<style>
+:root{
+  --bg:#06111f;
+  --panel:#0d1f36;
+  --panel2:#0a1b31;
+  --line:#294866;
+  --text:#f7f9ff;
+  --muted:#b8c9de;
+  --blue:#4b86bd;
+  --orange:#e87535;
+  --green:#78aaa3;
+  --red:#ef6a5d;
+  --yellow:#f2b84b;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Segoe UI,Arial,sans-serif;
+}
+.app{
+  max-width:1800px;
+  margin:0 auto;
+  padding:28px;
+}
+.header{
+  display:flex;
+  align-items:center;
+  gap:28px;
+  padding:26px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:var(--panel2);
+}
+.logo{
+  width:250px;
+  max-height:70px;
+  object-fit:contain;
+  padding-right:26px;
+  border-right:1px solid rgba(255,255,255,.28);
+}
+.titleBox{flex:1}
+.eyebrow{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.25em;
+  color:#b8d4f2;
+}
+h1{
+  margin:6px 0;
+  font-size:38px;
+}
+.sub{
+  color:#c7d8ee;
+}
+.status{
+  display:none;
+  margin:14px 0;
+  padding:13px;
+  border:1px solid var(--orange);
+  border-radius:14px;
+  background:#1b2130;
+  color:#ffd4b8;
+}
+.tabs{
+  display:flex;
+  gap:10px;
+  margin:16px 0;
+  flex-wrap:wrap;
+}
+.tab{
+  border:1px solid var(--line);
+  background:var(--panel);
+  color:var(--muted);
+  padding:12px 16px;
+  border-radius:999px;
+  font-weight:900;
+  cursor:pointer;
+}
+.tab.active{
+  background:linear-gradient(90deg,#2f67a5,#5b9bd5);
+  color:white;
+  border-color:#5b9bd5;
+}
+.filters{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+  margin:16px 0;
+}
+.field{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+}
+label{
+  display:block;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.18em;
+  color:#b8d4f2;
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+select{
+  width:100%;
+  background:transparent;
+  color:#fff;
+  border:0;
+  font-weight:800;
+  font-size:15px;
+}
+option{background:#0d1f36}
+.screen{display:none}
+.screen.active{display:block}
+
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  margin-bottom:14px;
+}
+.kpi{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px;
+  min-height:120px;
+}
+.kpi.main{
+  grid-column:span 2;
+  background:linear-gradient(135deg,#0d1f36,#123457);
+}
+.kpi .label{
+  font-size:11px;
+  letter-spacing:.16em;
+  color:#b8d4f2;
+  font-weight:900;
+  text-transform:uppercase;
+}
+.kpi .value{
+  font-size:34px;
+  font-weight:950;
+  margin:14px 0 4px;
+}
+.kpi.main .value{font-size:48px}
+.kpi .note{
+  color:#c7d8ee;
+  font-size:13px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:14px;
+}
+.grid.two{
+  grid-template-columns:1.2fr 1fr;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:20px;
+  min-height:320px;
+  overflow:hidden;
+}
+.panelHead{
+  padding:18px;
+  border-bottom:1px solid var(--line);
+}
+h2{
+  margin:0;
+  font-size:18px;
+}
+.hint{
+  color:#c7d8ee;
+  font-size:13px;
+  margin-top:5px;
+}
+.body{padding:18px}
+
+.barRow{
+  display:grid;
+  grid-template-columns:150px 1fr 70px 60px;
+  gap:10px;
+  align-items:center;
+  margin-bottom:12px;
+}
+.track{
+  height:22px;
+  background:#132941;
+  border-radius:4px;
+  overflow:hidden;
+}
+.fill{
+  height:100%;
+  background:linear-gradient(90deg,#2f67a5,#5b9bd5);
+}
+.fill.orange{
+  background:linear-gradient(90deg,#bd5b2f,#e87535);
+}
+.num,.pct{
+  text-align:right;
+  font-weight:800;
+}
+.cols{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:14px;
+  height:210px;
+  align-items:end;
+}
+.colWrap{
+  text-align:center;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  gap:8px;
+}
+.col{
+  height:var(--h);
+  min-height:32px;
+  background:linear-gradient(180deg,#4b86bd,#1f5791);
+}
+.col.orange{
+  background:linear-gradient(180deg,#e87535,#9f421b);
+}
+.colVal{
+  font-weight:900;
+  color:#80d199;
+}
+.colVal.warn{color:#ffa02b}
+.colVal.crit{color:#ff7d72}
+.colLbl{
+  font-size:12px;
+  color:#d9e6f8;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.alerts{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+}
+.alert{
+  background:#132840;
+  border-radius:16px;
+  padding:14px;
+  border-left:4px solid var(--blue);
+}
+.alert.orange{border-left-color:var(--orange)}
+.alert.red{border-left-color:var(--red)}
+.alert.green{border-left-color:var(--green)}
+.alert.yellow{border-left-color:var(--yellow)}
+.alert small{
+  display:block;
+  color:#a8bdd5;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+.alert b{
+  display:block;
+  font-size:22px;
+  margin:8px 0;
+}
+.alert span{
+  color:#c7d8ee;
+  font-size:12px;
+}
+.rank{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  padding:13px 0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.rank small{
+  display:block;
+  color:#aebfd5;
+  margin-top:4px;
+}
+.statusPill{
+  border:1px solid #345978;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12px;
+  font-weight:900;
+  align-self:center;
+}
+.ok{color:#83d99d}
+.att{color:#ffa02b}
+.crit{color:#ff7d72}
+
+.tableWrap{
+  overflow:auto;
+  max-height:620px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:900px;
+}
+th,td{
+  padding:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  text-align:left;
+  font-size:13px;
+}
+th{
+  color:#b8d4f2;
+  text-transform:uppercase;
+  font-size:10px;
+  letter-spacing:.14em;
+  position:sticky;
+  top:0;
+  background:var(--panel);
+  z-index:1;
+}
+.mapFake{
+  height:360px;
+  border-radius:16px;
+  background:
+    radial-gradient(circle at 30% 35%,rgba(232,117,53,.45),transparent 18%),
+    radial-gradient(circle at 60% 45%,rgba(75,134,189,.45),transparent 22%),
+    radial-gradient(circle at 45% 70%,rgba(120,170,163,.38),transparent 18%),
+    linear-gradient(135deg,#091827,#102d4d);
+  border:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+}
+.mapFake:after{
+  content:"Mapa territorial por bairro/município";
+  position:absolute;
+  inset:auto 18px 18px 18px;
+  color:#dbeafe;
+  font-weight:900;
+}
+.mapNote{
+  color:#c7d8ee;
+  margin-top:12px;
+  line-height:1.5;
+}
+.footer{
+  margin-top:16px;
+  color:#aebfd5;
+  font-size:13px;
+}
+
+@media(max-width:1100px){
+  .filters{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpi.main{grid-column:span 2}
+  .grid,.grid.two{grid-template-columns:1fr}
+  .alerts{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:720px){
+  .app{padding:14px}
+  .header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .logo{
+    width:220px;
+    border-right:0;
+    padding-right:0;
+  }
+  .kpis,.alerts{grid-template-columns:1fr}
+  .kpi.main{grid-column:span 1}
+  h1{font-size:30px}
+  .barRow{grid-template-columns:100px 1fr 60px}
+  .pct{display:none}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header class="header">
+  <img class="logo" src="assets/RIOPREFEITURA%20Comlurb%20horizontal%20monocromatica%20branco.png" alt="Prefeitura do Rio / COMLURB">
+  <div class="titleBox">
+    <div class="eyebrow">COMLURB · RADAR DA CIDADE</div>
+    <h1>Radar Territorial de Pessoas</h1>
+    <div class="sub">Aderência territorial, risco logístico e capacidade operacional da força de trabalho</div>
+  </div>
+</header>
+
+<div id="status" class="status"></div>
+
+<nav class="tabs">
+  <button class="tab active" data-screen="perfil">Perfil Funcional</button>
+  <button class="tab" data-screen="territorial">Territorial Macro</button>
+  <button class="tab" data-screen="analitico">Territorial Analítico</button>
+</nav>
+
+<section class="filters">
+  <div class="field">
+    <label>Diretoria</label>
+    <select id="fDir"><option>Carregando...</option></select>
+  </div>
+  <div class="field">
+    <label>Superintendência</label>
+    <select id="fSupCoord"><option>Carregando...</option></select>
+  </div>
+  <div class="field">
+    <label>Setor</label>
+    <select id="fSetor"><option>Carregando...</option></select>
+  </div>
+</section>
+
+<section id="perfil" class="screen active">
+
+  <section class="kpis">
+    <div class="kpi">
+      <div class="label">Total</div>
+      <div id="kTotal" class="value">0</div>
+      <div class="note">empregados no recorte</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Ativos</div>
+      <div id="kAtivos" class="value">0</div>
+      <div id="nAtivos" class="note">0% disponíveis</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Afastados</div>
+      <div id="kAfast" class="value">0</div>
+      <div id="nAfast" class="note">0% do total</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Risco de reposição</div>
+      <div id="kRisco" class="value">0%</div>
+      <div id="nRisco" class="note">65 anos ou mais</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Laudos / Restrições</div>
+      <div id="kLaudos" class="value">—</div>
+      <div class="note">em implantação</div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Distribuição por Diretoria</h2>
+        <div class="hint">Participação do efetivo no recorte atual</div>
+      </div>
+      <div class="body" id="dirBars"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Composição funcional</h2>
+        <div id="compHint" class="hint">Carregando análise...</div>
+      </div>
+      <div class="body" id="compFunc"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Atividade por Diretoria</h2>
+        <div class="hint">Percentual de empregados ativos</div>
+      </div>
+      <div class="body">
+        <div id="activityCols" class="cols"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid two" style="margin-top:14px">
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Alertas executivos</h2>
+        <div class="hint">Sinais de atenção para gestão</div>
+      </div>
+      <div class="body">
+        <div id="alerts" class="alerts"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Ranking de atenção</h2>
+        <div class="hint">Diretorias com menor atividade</div>
+      </div>
+      <div class="body" id="ranking"></div>
+    </div>
+  </section>
+
+</section>
+
+<section id="territorial" class="screen">
+
+  <section class="kpis">
+    <div class="kpi main">
+      <div class="label">Risco logístico indireto</div>
+      <div id="tForaRio" class="value">0%</div>
+      <div id="tForaRioNota" class="note">empregados com moradia fora do município do Rio</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Efetivo com cidade</div>
+      <div id="tTotal" class="value">0</div>
+      <div class="note">registros analisados</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Dentro do Rio</div>
+      <div id="tDentroRio" class="value">0%</div>
+      <div class="note">aderência municipal</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Top cidade externa</div>
+      <div id="tTopCidade" class="value">—</div>
+      <div id="tTopCidadeNota" class="note">maior concentração fora do Rio</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Top bairro</div>
+      <div id="tTopBairro" class="value">—</div>
+      <div id="tTopBairroNota" class="note">maior concentração geral</div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <div class="panelHead">
+        <h2>RJ x Fora do RJ</h2>
+        <div class="hint">Distribuição territorial da moradia</div>
+      </div>
+      <div class="body" id="rjForaBars"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Top cidades externas</h2>
+        <div class="hint">Municípios com maior concentração de empregados</div>
+      </div>
+      <div class="body" id="topCidades"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Top bairros</h2>
+        <div class="hint">Bairros com maior concentração no recorte</div>
+      </div>
+      <div class="body" id="topBairros"></div>
+    </div>
+  </section>
+
+  <section class="grid two" style="margin-top:14px">
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Mapa executivo territorial</h2>
+        <div class="hint">Versão atual sem latitude/longitude: leitura por bairro e município</div>
+      </div>
+      <div class="body">
+        <div class="mapFake"></div>
+        <div class="mapNote">
+          Para mapa real com pontos, heatmap e linhas casa x trabalho, será necessário geocodificar os CEPs e criar uma base de coordenadas dos setores.
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Ranking de risco territorial</h2>
+        <div class="hint">Setores com maior percentual de empregados fora do Rio</div>
+      </div>
+      <div class="body" id="rankingTerritorial"></div>
+    </div>
+  </section>
+
+</section>
+
+<section id="analitico" class="screen">
+
+  <section class="grid two">
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Matriz territorial por setor</h2>
+        <div class="hint">Risco logístico indireto por diretoria, superintendência e setor</div>
+      </div>
+      <div class="body tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Diretoria</th>
+              <th>Superintendência</th>
+              <th>Setor</th>
+              <th>Empregados</th>
+              <th>Fora do Rio</th>
+              <th>% Fora RJ</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="analiticoSetores"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelHead">
+        <h2>Cidades e bairros críticos</h2>
+        <div class="hint">Concentração territorial no recorte filtrado</div>
+      </div>
+      <div class="body">
+        <h2 style="font-size:15px;margin-bottom:12px">Cidades externas</h2>
+        <div id="analiticoCidades"></div>
+        <h2 style="font-size:15px;margin:24px 0 12px">Bairros</h2>
+        <div id="analiticoBairros"></div>
+      </div>
+    </div>
+  </section>
+
+</section>
+
+<div id="updated" class="footer">Atualizado em: carregando...</div>
+
+</div>
+
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRE3Q_RdpZOqc4f3O3fQirMQkEXQWyBkiIlXB6LZWgqTZbItGBHAxUHf2-0kEcALDIUfyPeK7GyBQrB/pub?gid=1371643814&single=true&output=csv";
+
+let ROWS = [];
+let COL = {};
+
+const $ = id => document.getElementById(id);
+const clean = v => (v ?? "").toString().trim();
+const norm = v => clean(v).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase();
+const fmtInt = n => (+n || 0).toLocaleString("pt-BR");
+const fmtPct = n => (+n || 0).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}) + "%";
+
+function showError(msg){
+  const el = $("status");
+  if(el){el.style.display="block";el.textContent=msg;}
+}
+function hideError(){
+  const el = $("status");
+  if(el) el.style.display="none";
+}
+
+function splitCSVLine(line){
+  const result=[];let current="";let insideQuotes=false;
+  for(let i=0;i<line.length;i++){
+    const char=line[i], next=line[i+1];
+    if(char === '"' && insideQuotes && next === '"'){current+='"';i++;}
+    else if(char === '"'){insideQuotes=!insideQuotes;}
+    else if(char === "," && !insideQuotes){result.push(current);current="";}
+    else{current+=char;}
+  }
+  result.push(current);
+  return result;
+}
+
+function parseCSV(text){
+  const lines=text.replace(/\r/g,"").split("\n").filter(l=>l.trim());
+  const headers=splitCSVLine(lines[0]).map(h=>h.trim());
+  return lines.slice(1).map(line=>{
+    const values=splitCSVLine(line);
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=values[i] ?? "");
+    return obj;
+  });
+}
+
+function pick(headers,names){
+  const normalized=headers.map(norm);
+  for(const n of names){
+    const i=normalized.findIndex(h=>h===norm(n));
+    if(i>=0) return headers[i];
+  }
+  for(const n of names){
+    const nn=norm(n);
+    const i=normalized.findIndex(h=>h.includes(nn) || nn.includes(h));
+    if(i>=0) return headers[i];
+  }
+  return null;
+}
+
+function val(row,col){return col ? clean(row[col]) : "";}
+
+function numberFrom(v){
+  let s=clean(v).replace(/[^0-9,.-]/g,"");
+  if(s.includes(",") && s.includes(".")) s=s.replace(/\./g,"").replace(",",".");
+  else s=s.replace(",",".");
+  return parseFloat(s)||0;
+}
+
+function isAfastado(row){
+  const afast=norm(val(row,COL.afast));
+  const tipo=norm(val(row,COL.tipoAfastamento));
+  const codfreq=norm(val(row,COL.codfreq));
+  if(!afast && !tipo && !codfreq) return false;
+  if(["ATIVO","NORMAL","TRABALHANDO"].includes(afast)) return false;
+  return !!(afast || tipo || codfreq);
+}
+
+function isOperacional(row){
+  const x=norm([
+    val(row,COL.tipo),
+    val(row,COL.tipoSetor),
+    val(row,COL.funcaoCargo),
+    val(row,COL.funcao),
+    val(row,COL.descricao)
+  ].join(" "));
+  return x.includes("OPER") || x.includes("GARI") || x.includes("MOTOR") || x.includes("FISCAL") || x.includes("AGENTE") || x.includes("LIMP") || x.includes("COLETA");
+}
+
+function cidadeVal(row){
+  return val(row,COL.cidadeEnder) || "Não informado";
+}
+function bairroVal(row){
+  return val(row,COL.bairroEnder) || "Não informado";
+}
+function supVal(row){
+  return val(row,COL.sup) || "Não informado";
+}
+function isRio(row){
+  return norm(cidadeVal(row)) === "RIO DE JANEIRO";
+}
+
+function groupBy(arr,fn){
+  return arr.reduce((acc,row)=>{
+    const key=fn(row) || "Não informado";
+    (acc[key] ||= []).push(row);
+    return acc;
+  },{});
+}
+
+function fillSelect(id,values,label){
+  const el=$(id);
+  if(!el) return;
+  const current=el.value;
+  const list=[...new Set(values.filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  el.innerHTML=`<option value="">${label}</option>` + list.map(v=>`<option value="${String(v).replaceAll('"','&quot;')}">${v}</option>`).join("");
+  if([...el.options].some(o=>o.value===current)){
+    el.value=current;
+  }else{
+    el.value="";
+  }
+}
+
+function rowsForFilterLevel(level){
+  const dir = $("fDir")?.value || "";
+  const sup = $("fSupCoord")?.value || "";
+  return ROWS.filter(row => {
+    if(level >= 1 && dir && val(row,COL.dir) !== dir) return false;
+    if(level >= 2 && sup && supVal(row) !== sup) return false;
+    return true;
+  });
+}
+
+function updateFilters(changedId){
+  if(changedId === "fDir"){
+    $("fSupCoord").value = "";
+    $("fSetor").value = "";
+  }
+  if(changedId === "fSupCoord"){
+    $("fSetor").value = "";
+  }
+
+  fillSelect("fDir", ROWS.map(r=>val(r,COL.dir)), "Todas as Diretorias");
+
+  const rowsSup = rowsForFilterLevel(1);
+  fillSelect("fSupCoord", rowsSup.map(r=>supVal(r)), "Todas as Superintendências");
+
+  const rowsSetor = rowsForFilterLevel(2);
+  fillSelect("fSetor", rowsSetor.map(r=>val(r,COL.setor)), "Todos os Setores");
+}
+
+function filteredRows(){
+  return ROWS.filter(row =>
+    (!$("fDir")?.value || val(row,COL.dir)===$("fDir").value) &&
+    (!$("fSupCoord")?.value || supVal(row)===$("fSupCoord").value) &&
+    (!$("fSetor")?.value || val(row,COL.setor)===$("fSetor").value)
+  );
+}
+
+function statusTerritorial(p){
+  if(p < 10) return ["OK","ok"];
+  if(p < 20) return ["Atenção","att"];
+  if(p < 30) return ["Crítico","crit"];
+  return ["Muito crítico","crit"];
+}
+
+function renderBarList(elId,rows,total,limit=8,orange=false){
+  const el=$(elId); if(!el) return;
+  const list=rows.slice(0,limit);
+  const max=list[0]?.[1] || 1;
+  el.innerHTML=list.map(([k,v])=>`
+    <div class="barRow">
+      <span title="${k}">${k}</span>
+      <div class="track"><div class="fill ${orange?"orange":""}" style="width:${v/max*100}%"></div></div>
+      <b class="num">${fmtInt(v)}</b>
+      <span class="pct">${fmtPct(total?v/total*100:0)}</span>
+    </div>
+  `).join("") || `<div class="hint">Sem dados.</div>`;
+}
+
+function render(){
+  const data=filteredRows();
+  renderPerfil(data);
+  renderTerritorial(data);
+  renderAnalitico(data);
+}
+
+function renderPerfil(data){
+  const total=data.length;
+  const afastados=data.filter(isAfastado).length;
+  const ativos=total-afastados;
+  const operacionais=data.filter(isOperacional).length;
+  const administrativos=total-operacionais;
+
+  const idades=data.map(r=>numberFrom(val(r,COL.idade))).filter(n=>n>0);
+  const acima65=idades.filter(n=>n>=65).length;
+
+  const pctAtivos=total?ativos/total*100:0;
+  const pctAfast=total?afastados/total*100:0;
+  const pctRisco=idades.length?acima65/idades.length*100:0;
+  const pctOper=total?operacionais/total*100:0;
+  const pctAdm=total?administrativos/total*100:0;
+
+  $("kTotal").textContent=fmtInt(total);
+  $("kAtivos").textContent=fmtInt(ativos);
+  $("kAfast").textContent=fmtInt(afastados);
+  $("kRisco").textContent=idades.length?fmtPct(pctRisco):"N/D";
+  $("nAtivos").textContent=fmtPct(pctAtivos)+" disponíveis";
+  $("nAfast").textContent=fmtPct(pctAfast)+" do total";
+  $("nRisco").textContent=idades.length?fmtInt(acima65)+" empregados com 65 anos ou mais":"idade não localizada";
+
+  $("compHint").textContent=pctOper>=60?"Predominância operacional coerente com a atividade-fim.":"Maior peso relativo administrativo.";
+  $("compFunc").innerHTML=`
+    <div class="alert green">
+      <small>Operacional</small>
+      <b>${fmtPct(pctOper)}</b>
+      <span>${fmtInt(operacionais)} empregados</span>
+    </div>
+    <div class="alert orange" style="margin-top:10px">
+      <small>Administrativo</small>
+      <b>${fmtPct(pctAdm)}</b>
+      <span>${fmtInt(administrativos)} empregados</span>
+    </div>
+  `;
+
+  const dirRows=Object.entries(groupBy(data,r=>val(r,COL.dir))).map(([k,v])=>[k,v.length]).sort((a,b)=>b[1]-a[1]);
+  renderBarList("dirBars",dirRows,total,6);
+
+  const activityRows=Object.entries(groupBy(data,r=>val(r,COL.dir))).map(([k,v])=>{
+    const afast=v.filter(isAfastado).length;
+    const pct=v.length?(v.length-afast)/v.length*100:0;
+    return [k,v.length,pct];
+  }).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+  $("activityCols").innerHTML=activityRows.map(([k,_,p])=>`
+    <div class="colWrap">
+      <div class="colVal ${p<75?"crit":p<85?"warn":""}">${fmtPct(p)}</div>
+      <div class="col" style="--h:${Math.max(18,p)}%"></div>
+      <div class="colLbl" title="${k}">${k}</div>
+    </div>
+  `).join("") || `<div class="hint">Sem dados.</div>`;
+
+  $("alerts").innerHTML=`
+    <div class="alert orange"><small>Pressão operacional</small><b>${fmtPct(pctAfast)}</b><span>afastamento geral no filtro atual</span></div>
+    <div class="alert red"><small>Risco de reposição</small><b>${idades.length?fmtPct(pctRisco):"N/D"}</b><span>quadro com 65 anos ou mais</span></div>
+    <div class="alert green"><small>Estrutura funcional</small><b>${fmtPct(pctOper)}</b><span>concentração operacional</span></div>
+    <div class="alert"><small>Laudos / Restrições</small><b>—</b><span>em implantação</span></div>
+    <div class="alert"><small>Base filtrada</small><b>${fmtInt(total)}</b><span>empregados no recorte selecionado</span></div>
+  `;
+
+  const rankingRows=Object.entries(groupBy(data,r=>val(r,COL.dir))).map(([k,v])=>{
+    const afast=v.filter(isAfastado).length;
+    const ativos=v.length-afast;
+    const pct=v.length?ativos/v.length*100:0;
+    return [k,v.length,ativos,afast,pct];
+  }).filter(x=>x[1]>=5).sort((a,b)=>a[4]-b[4]).slice(0,5);
+
+  $("ranking").innerHTML=rankingRows.map(([k,total,ativos,afast,pct])=>`
+    <div class="rank">
+      <div><b>${k}</b><small>${fmtInt(ativos)} ativos · ${fmtInt(afast)} afastados · ${fmtPct(pct)} atividade</small></div>
+      <span class="statusPill ${pct<75?"crit":pct<85?"att":"ok"}">${pct<75?"Crítico":pct<85?"Atenção":"Monitorar"}</span>
+    </div>
+  `).join("") || `<div class="hint">Sem ranking disponível.</div>`;
+}
+
+function renderTerritorial(data){
+  const valid=data.filter(r=>cidadeVal(r) && cidadeVal(r)!=="Não informado");
+  const total=valid.length;
+  const fora=valid.filter(r=>!isRio(r)).length;
+  const dentro=total-fora;
+  const pctFora=total?fora/total*100:0;
+  const pctDentro=total?dentro/total*100:0;
+
+  const externas=valid.filter(r=>!isRio(r));
+  const cidadeRows=Object.entries(groupBy(externas,r=>cidadeVal(r))).map(([k,v])=>[k,v.length]).sort((a,b)=>b[1]-a[1]);
+  const bairroRows=Object.entries(groupBy(valid,r=>bairroVal(r))).map(([k,v])=>[k,v.length]).sort((a,b)=>b[1]-a[1]);
+
+  $("tTotal").textContent=fmtInt(total);
+  $("tForaRio").textContent=fmtPct(pctFora);
+  $("tForaRioNota").textContent=`${fmtInt(fora)} empregados fora do município do Rio`;
+  $("tDentroRio").textContent=fmtPct(pctDentro);
+  $("tTopCidade").textContent=cidadeRows[0]?.[0] || "—";
+  $("tTopCidadeNota").textContent=cidadeRows[0] ? `${fmtInt(cidadeRows[0][1])} empregados` : "sem cidade externa";
+  $("tTopBairro").textContent=bairroRows[0]?.[0] || "—";
+  $("tTopBairroNota").textContent=bairroRows[0] ? `${fmtInt(bairroRows[0][1])} empregados` : "sem bairro informado";
+
+  renderBarList("rjForaBars",[["Rio de Janeiro",dentro],["Fora do Rio",fora]],total,2,true);
+  renderBarList("topCidades",cidadeRows,fora,8,true);
+  renderBarList("topBairros",bairroRows,total,8);
+
+  const setorRows=Object.entries(groupBy(valid,r=>`${val(r,COL.dir)}|${supVal(r)}|${val(r,COL.setor)}`)).map(([key,v])=>{
+    const [dir,sup,setor]=key.split("|");
+    const qtd=v.length;
+    const foraSetor=v.filter(r=>!isRio(r)).length;
+    const pct=qtd?foraSetor/qtd*100:0;
+    return {dir,sup,setor,qtd,fora:foraSetor,pct};
+  }).filter(r=>r.qtd>=10).sort((a,b)=>b.pct-a.pct || b.qtd-a.qtd).slice(0,8);
+
+  $("rankingTerritorial").innerHTML=setorRows.map(r=>{
+    const [st,cls]=statusTerritorial(r.pct);
+    return `
+      <div class="rank">
+        <div>
+          <b>${r.setor}</b>
+          <small>${r.dir} · ${r.sup} · ${fmtInt(r.fora)} de ${fmtInt(r.qtd)} fora do Rio · ${fmtPct(r.pct)}</small>
+        </div>
+        <span class="statusPill ${cls}">${st}</span>
+      </div>
+    `;
+  }).join("") || `<div class="hint">Sem ranking disponível.</div>`;
+}
+
+function renderAnalitico(data){
+  const valid=data.filter(r=>cidadeVal(r) && cidadeVal(r)!=="Não informado");
+
+  const setorRows=Object.entries(groupBy(valid,r=>`${val(r,COL.dir)}|${supVal(r)}|${val(r,COL.setor)}`)).map(([key,v])=>{
+    const [dir,sup,setor]=key.split("|");
+    const qtd=v.length;
+    const fora=v.filter(r=>!isRio(r)).length;
+    const pct=qtd?fora/qtd*100:0;
+    return {dir,sup,setor,qtd,fora,pct};
+  }).sort((a,b)=>b.pct-a.pct || b.qtd-a.qtd);
+
+  $("analiticoSetores").innerHTML=setorRows.map(r=>{
+    const [st,cls]=statusTerritorial(r.pct);
+    return `
+      <tr>
+        <td>${r.dir}</td>
+        <td>${r.sup}</td>
+        <td>${r.setor}</td>
+        <td>${fmtInt(r.qtd)}</td>
+        <td>${fmtInt(r.fora)}</td>
+        <td>${fmtPct(r.pct)}</td>
+        <td><span class="statusPill ${cls}">${st}</span></td>
+      </tr>
+    `;
+  }).join("");
+
+  const externas=valid.filter(r=>!isRio(r));
+  const cidadeRows=Object.entries(groupBy(externas,r=>cidadeVal(r))).map(([k,v])=>[k,v.length]).sort((a,b)=>b[1]-a[1]);
+  const bairroRows=Object.entries(groupBy(valid,r=>bairroVal(r))).map(([k,v])=>[k,v.length]).sort((a,b)=>b[1]-a[1]);
+
+  renderBarList("analiticoCidades",cidadeRows,externas.length,8,true);
+  renderBarList("analiticoBairros",bairroRows,valid.length,8);
+}
+
+async function loadData(){
+  try{
+    hideError();
+
+    const res=await fetch(CSV_URL+"&cachebuster="+Date.now(),{cache:"no-store"});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+
+    const text=await res.text();
+    if(!text || text.length<20) throw new Error("CSV vazio ou inválido.");
+
+    const rows=parseCSV(text);
+    if(!rows.length) throw new Error("Nenhuma linha encontrada.");
+
+    ROWS=rows.filter(row=>Object.values(row).some(v=>clean(v)));
+    const headers=Object.keys(ROWS[0]);
+
+    COL={
+      coddir:pick(headers,["CODDIR"]),
+      dir:pick(headers,["DIRETORIA"]),
+      sup:pick(headers,["SUPERINTENDÊNCIA","SUPERINTENDENCIA"]),
+      setor:pick(headers,["SETOR"]),
+      registro:pick(headers,["REGISTRO"]),
+      sexo:pick(headers,["SEXO"]),
+      funcaoCargo:pick(headers,["FUNCAOCARGO"]),
+      ref:pick(headers,["REFERENCIA","REFERÊNCIA"]),
+      admissao:pick(headers,["ADMISSÃO","ADMISSAO"]),
+      nascimento:pick(headers,["NASCIMENTO"]),
+      funcao:pick(headers,["FUNCAO","FUNÇÃO"]),
+      codfreq:pick(headers,["CODFREQ"]),
+      afast:pick(headers,["AFASTAMENTO"]),
+      tipoAfastamento:pick(headers,["TIPOAFASTAMENTO"]),
+      descricao:pick(headers,["DESCRIÇÃO","DESCRICAO"]),
+      tipo:pick(headers,["TIPOCARGO"]),
+      escolaridade:pick(headers,["ESCOLARIDADE"]),
+      bairroEnder:pick(headers,["BAIRROENDER","BAIRRO"]),
+      cidadeEnder:pick(headers,["CIDADEENDER","CIDADE"]),
+      idade:pick(headers,["IDADEANOS"]),
+      tempoCasaAnos:pick(headers,["TPCASAANOS"]),
+      jornada:pick(headers,["JORNADA"]),
+      tipoSetor:pick(headers,["TIPOSETOR"])
+    };
+
+    if(!COL.dir) throw new Error("Coluna DIRETORIA não localizada.");
+    if(!COL.setor) throw new Error("Coluna SETOR não localizada.");
+
+    updateFilters("");
+    render();
+
+    $("updated").textContent="Atualizado em: "+new Date().toLocaleString("pt-BR");
+  }catch(err){
+    console.error(err);
+    showError("Não foi possível carregar os dados via CSV publicado. Erro: "+err.message);
+    $("updated").textContent="Atualizado em: erro no carregamento";
+  }
+}
+
+["fDir","fSupCoord","fSetor"].forEach(id=>{
+  document.addEventListener("change",e=>{
+    if(e.target && e.target.id===id){
+      updateFilters(id);
+      render();
+    }
+  });
+});
+
+document.querySelectorAll(".tab").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+    btn.classList.add("active");
+    $(btn.dataset.screen).classList.add("active");
+  });
+});
+
+document.addEventListener("DOMContentLoaded",loadData);
+</script>
+
+</body>
+</html>
